@@ -1,226 +1,233 @@
-# VisiFoto — Smart AI-Powered Photo Management System
+# VisiFoto
 
-VisiFoto is a modern, high-performance digital asset and file management system. It combines a robust **Laravel 12** web application with a specialized **Python FastAPI** AI microservice to provide seamless cloud drive management, public sharing galleries, facial search capabilities, and automatic face clustering using DBSCAN.
+VisiFoto is a web-based photo and file management application built with Laravel 12 and a Python FastAPI face-recognition service. The system supports private and public file storage, public gallery access, face-based photo search, and automatic face clustering for public photo collections.
 
----
+## Main Features
 
-## 🚀 Key Features
+- Drive-style file and folder management.
+- Public and private visibility controls for files and folders.
+- Public directory gallery for shared folders and photos.
+- Face search by uploading a reference photo.
+- Configurable similarity threshold and search result limit.
+- Folder-scoped face search for faster lookup.
+- Automatic face indexing and clustering for public photo folders.
+- Cluster management interface for reviewing and renaming grouped faces.
 
-*   **Unified Drive System**
-    *   Create, rename, and delete folders recursively.
-    *   Upload images and documents with ease.
-    *   Toggle individual files or entire folders between **Public** and **Private** status.
-    *   Download single files or download folders directly as a compressed `.zip` archive.
-*   **Public Directory Gallery**
-    *   Dedicated landing view for guest or user discovery of publicly shared folders and items.
-*   **AI-Powered Face Search ("Cari Foto Saya")**
-    *   Upload a reference face photo to find all photos containing similar faces.
-    *   Configurable similarity thresholds and result limits (Top-K).
-    *   Targeted search within specific folders (and their subfolders) to accelerate lookup times.
-    *   Real-time progress feedback UI with a cancel button that aborts the HTTP request gracefully (using JS `AbortController`).
-*   **Automatic Face Clustering (DBSCAN)**
-    *   Automatically runs face clustering when folders are set to public or when new photos are uploaded to public folders.
-    *   Group photos automatically without needing to define the number of clusters beforehand.
-    *   Interactive cluster management dashboard to view grouped images and rename clusters (using double-click in-place editing).
+## Architecture
 
----
-
-## 📐 System Architecture
-
-The interaction flow between the Laravel frontend/backend, the MySQL database, and the Python FaceNet microservice:
+The application consists of a Laravel web application, a MySQL database, local storage, and a Python FaceNet microservice.
 
 ```mermaid
 graph TD
-    User["👤 User (Web Browser)"]
-    Laravel["🌐 Laravel 12 Backend"]
-    MySQL["🗄️ MySQL Database"]
-    Storage["📂 Laravel Storage Disk"]
-    Python["🐍 Python FastAPI Service"]
-    Models["🤖 AI Models (MTCNN + FaceNet)"]
+    User["User Browser"]
+    Laravel["Laravel 12 Application"]
+    MySQL["MySQL Database"]
+    Storage["Laravel Storage"]
+    Python["Python FastAPI Service"]
+    Models["MTCNN and FaceNet Models"]
 
-    User <-->|HTTP / Blade + AlpineJS| Laravel
-    Laravel <-->|Read/Write Metadata| MySQL
-    Laravel -->|Saves Images| Storage
-    Laravel <-->|HTTP API Calls| Python
-    Python <-->|Direct Connection (PyMySQL)| MySQL
-    Python <-->|Reads Uploads / Embeddings| Storage
-    Python <-->|Process Image Data| Models
+    User <-->|HTTP / Blade / Alpine.js| Laravel
+    Laravel <-->|Metadata| MySQL
+    Laravel -->|Stores Files| Storage
+    Laravel <-->|HTTP API| Python
+    Python <-->|PyMySQL| MySQL
+    Python <-->|Reads Files and Embeddings| Storage
+    Python <-->|Image Processing| Models
 ```
 
----
+## Requirements
 
-## 🛠️ System Requirements
+### Laravel Application
 
-### 💻 Web Application (Laravel)
-*   **PHP**: `^8.2`
-*   **Database**: MySQL / MariaDB (supporting JSON columns for embeddings)
-*   **Package Manager**: Composer
-*   **Frontend Tools**: Node.js & npm (for Alpine.js v3, Tailwind CSS v3, and Vite)
+- PHP `^8.2`
+- MySQL or MariaDB
+- Composer
+- Node.js and npm
 
-### 🐍 AI Microservice (Python)
-*   **Python**: `>= 3.12` (Tested and validated on Python `3.14` via Linuxbrew)
-*   **Virtual Environment**: `virtualenv` or built-in `venv`
-*   **Core Libraries**:
-    *   `FastAPI` & `Uvicorn` (High-performance API server)
-    *   `MTCNN` (Multi-task Cascaded CNN for face detection)
-    *   `FaceNet` (InceptionResnetV1 pre-trained on VGGFace2 for embedding generation)
-    *   `scikit-learn` (DBSCAN clustering & Cosine distance metrics)
-    *   `PyMySQL` (Direct database interaction for async processing)
-    *   `OpenCV` & `Pillow` (Image processing)
-    *   `PyTorch` & `Torchvision` (Deep learning framework)
+### Python FaceNet Service
 
----
+- Python `>= 3.12`
+- Virtual environment support through `venv` or `virtualenv`
+- FastAPI and Uvicorn
+- MTCNN and FaceNet
+- scikit-learn
+- PyMySQL
+- OpenCV and Pillow
+- PyTorch and Torchvision
 
-## 📦 Installation & Setup
+## Installation
 
-Follow these steps to set up both the Laravel application and the Python AI service on your local environment:
+### 1. Configure Laravel
 
-### Step 1: Configure the Laravel Application
+Clone the repository, enter the project directory, and copy the environment file.
 
-1.  Clone the repository and navigate to the project root directory.
-2.  Copy the example environment file:
-    ```bash
-    cp .env.example .env
-    ```
-3.  Configure your database credentials and path settings inside the newly created `.env` file:
-    ```env
-    DB_CONNECTION=mysql
-    DB_HOST=127.0.0.1
-    DB_PORT=3306
-    DB_DATABASE=app_pemotretan
-    DB_USERNAME=root
-    DB_PASSWORD=your_password
-    ```
-4.  Run the composer setup script to install dependencies, generate application keys, run migrations, and build frontend assets:
-    ```bash
-    composer run setup
-    ```
-5.  Link the storage folder:
-    ```bash
-    php artisan storage:link
-    ```
+```bash
+cp .env.example .env
+```
 
-### Step 2: Configure the Python FaceNet Microservice
+Update the database configuration in `.env`.
 
-1.  Navigate into the `python-facenet` folder:
-    ```bash
-    cd python-facenet
-    ```
-2.  Copy the service environment file:
-    ```bash
-    cp .env.example .env
-    ```
-3.  Adjust the environment values in `python-facenet/.env`. Make sure the MySQL configuration matches your Laravel `.env` settings:
-    ```env
-    LARAVEL_STORAGE_PATH=../storage/app/public
-    DB_HOST=127.0.0.1
-    DB_PORT=3306
-    DB_DATABASE=app_pemotretan
-    DB_USERNAME=root
-    DB_PASSWORD=your_password
-    ```
-4.  Run the script command to automatically create a virtual environment (`venv`) and install all required Python packages (this may take 5–15 minutes as it downloads PyTorch and the pre-trained weights):
-    ```bash
-    python start.py --install
-    ```
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=app_pemotretan
+DB_USERNAME=root
+DB_PASSWORD=your_password
+```
 
----
+Install dependencies, generate the application key, run migrations, and build the frontend assets.
 
-## 🚦 Running the Services
+```bash
+composer run setup
+```
 
-### Running Laravel
-To run the Laravel web server, queue listener, log tailing, and Vite hot reload concurrently, run:
+Create the public storage link.
+
+```bash
+php artisan storage:link
+```
+
+### 2. Configure the Python Service
+
+Move into the Python service directory and copy its environment file.
+
+```bash
+cd python-facenet
+cp .env.example .env
+```
+
+Update `python-facenet/.env` so the database configuration matches the Laravel `.env` file.
+
+```env
+LARAVEL_STORAGE_PATH=../storage/app/public
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=app_pemotretan
+DB_USERNAME=root
+DB_PASSWORD=your_password
+```
+
+Create the virtual environment and install the Python dependencies.
+
+```bash
+python start.py --install
+```
+
+The first installation can take several minutes because it downloads PyTorch and pretrained model weights.
+
+## Running the Application
+
+Start the Laravel application, queue worker, log watcher, and Vite development server.
+
 ```bash
 composer run dev
 ```
-The application will be accessible at: `http://localhost:8000`.
 
-### Running Python Microservice
-To start the FastAPI server:
+The Laravel application runs at:
+
+```text
+http://localhost:8000
+```
+
+Start the Python FaceNet service from the `python-facenet` directory.
+
 ```bash
 cd python-facenet
-
-# Normal Mode
 python start.py
+```
 
-# Development Mode (Auto-reloads on file changes)
+Useful development commands:
+
+```bash
 python start.py --reload
-
-# Custom Port Mode (Default port is 8001)
 python start.py --port 8002
 ```
-The microservice will run at: `http://127.0.0.1:8001`. Interactive API documentation is available at `http://127.0.0.1:8001/docs`.
 
----
+By default, the Python service runs at:
 
-## 🗂️ Face Indexing Guide
+```text
+http://127.0.0.1:8001
+```
 
-Before face searching and clustering can work, photos in storage must be indexed (meaning faces are detected, and their 512-dimensional embeddings are saved).
+The FastAPI documentation is available at:
 
-### Method 1: Using Python Script (Recommended for bulk seeding)
-Run the script to index all existing photos in your storage:
+```text
+http://127.0.0.1:8001/docs
+```
+
+## Face Indexing
+
+Photos must be indexed before face search and clustering can return results. During indexing, faces are detected and 512-dimensional embeddings are stored for later comparison.
+
+### Index from the Python Service
+
 ```bash
 cd python-facenet
-
-# Index all photos
 python index_storage.py
+```
 
-# Index a specific folder/subpath
+Additional indexing options:
+
+```bash
 python index_storage.py --path drive-files
-
-# Index asynchronously in the background
 python index_storage.py --async-mode
 ```
 
-### Method 2: Via Laravel Admin Interface
-Click **"Index Storage"** from the "Cari Foto Saya" dashboard, or use the background indexing feature.
+### Index from the Laravel Interface
 
-### Method 3: Direct API Request
+Use the index action from the face search dashboard to start background indexing from the web application.
+
+### Index Through the API
+
 ```bash
-# Synchronous Indexing
 curl -X POST http://127.0.0.1:8001/index-files
-
-# Asynchronous Indexing
 curl -X POST http://127.0.0.1:8001/index-files/async
 ```
 
----
-
-## ⚙️ Configuration Variables
-
-These variables can be customized in your environment configurations:
+## Configuration
 
 ### Laravel `.env`
-*   `FACENET_SERVICE_URL`: The URL of the running Python service (default: `http://127.0.0.1:8001`).
-*   `FACENET_TIMEOUT`: The maximum request timeout to the service in seconds (default: `60`).
+
+| Variable | Description | Default |
+| --- | --- | --- |
+| `FACENET_SERVICE_URL` | Python service base URL. | `http://127.0.0.1:8001` |
+| `FACENET_TIMEOUT` | Request timeout in seconds. | `60` |
 
 ### Python `.env`
-*   `SIMILARITY_THRESHOLD`: The cosine similarity threshold value range `0.0 - 1.0`. Defaults to `0.40` (lower values are more lenient; higher values like `0.70` are more strict).
-*   `DBSCAN_EPS`: DBSCAN clustering neighborhood search radius (default: `0.4`). Smaller radius enforces tighter cluster similarity requirements.
-*   `DBSCAN_MIN_SAMPLES`: Minimum number of photos to form a cluster (default: `2`).
 
----
+| Variable | Description | Default |
+| --- | --- | --- |
+| `SIMILARITY_THRESHOLD` | Cosine similarity threshold from `0.0` to `1.0`. Lower values are more lenient. | `0.40` |
+| `DBSCAN_EPS` | DBSCAN neighborhood radius. Smaller values create stricter clusters. | `0.4` |
+| `DBSCAN_MIN_SAMPLES` | Minimum number of photos required to form a cluster. | `2` |
 
-## 📊 API Endpoints Reference
+## API Reference
 
-### Laravel Face-Search Endpoints
-| HTTP Method | Route | Description |
-|---|---|---|
-| `GET` | `/face-search` | Face search dashboard index. |
-| `POST` | `/face-search/search` | Search photos by uploading target face image. |
-| `GET` | `/face-search/status` | Get status check of the Python microservice. |
-| `POST` | `/face-search/index` | Trigger a full sync/async face index of all files. |
-| `DELETE` | `/face-search/index` | Clear all database face embeddings (full re-index). |
+### Laravel Face Search Routes
 
-### Python FaceNet Endpoints
-| HTTP Method | Route | Description |
-|---|---|---|
-| `GET` | `/status` | Service health status and database statistics. |
+| Method | Route | Description |
+| --- | --- | --- |
+| `GET` | `/face-search` | Show the face search dashboard. |
+| `POST` | `/face-search/search` | Search photos using an uploaded reference face. |
+| `GET` | `/face-search/status` | Check the Python service status. |
+| `POST` | `/face-search/index` | Start face indexing. |
+| `DELETE` | `/face-search/index` | Clear existing face embeddings for re-indexing. |
+
+### Python FaceNet Routes
+
+| Method | Route | Description |
+| --- | --- | --- |
+| `GET` | `/status` | Return service health and database statistics. |
 | `POST` | `/index-files` | Index all images synchronously. |
 | `POST` | `/index-files/async` | Index all images asynchronously. |
-| `POST` | `/index-single` | Index a single newly uploaded file by ID. |
-| `POST` | `/search` | Parse image, compute embedding, and run cosine similarity. |
-| `POST` | `/cluster` | Trigger DBSCAN clustering on public folders. |
-| `DELETE` | `/index` | Clear all embedding datasets. |
+| `POST` | `/index-single` | Index a single uploaded file by ID. |
+| `POST` | `/search` | Generate an embedding and run similarity search. |
+| `POST` | `/cluster` | Run DBSCAN clustering on public folders. |
+| `DELETE` | `/index` | Clear indexed embedding data. |
 
----
+## Notes
+
+- Ensure the Laravel storage path configured in the Python service points to the same public storage used by Laravel.
+- Run face indexing after adding existing photos to storage.
+- Use the same database credentials in both `.env` files.
