@@ -224,6 +224,3 @@ These variables can be customized in your environment configurations:
 | `DELETE` | `/index` | Clear all embedding datasets. |
 
 ---
-
-## 📄 License
-This project is open-source software licensed under the [MIT License](LICENSE).
