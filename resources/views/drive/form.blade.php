@@ -67,33 +67,3 @@
     </div>
 </div>
 
-<!-- Lightbox Viewer -->
-<div id="lightbox-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black bg-opacity-90 p-4"
-     onclick="if(event.target===this) closeLightbox()">
-    <!-- Close -->
-    <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white bg-white bg-opacity-10 hover:bg-opacity-25 rounded-full p-2 transition z-10">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-    </button>
-    <!-- Prev -->
-    <button id="lightbox-prev" onclick="navigateLightbox(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-white bg-opacity-10 hover:bg-opacity-25 rounded-full p-3 transition z-10">
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-        </svg>
-    </button>
-    <!-- Next -->
-    <button id="lightbox-next" onclick="navigateLightbox(1)" class="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-white bg-opacity-10 hover:bg-opacity-25 rounded-full p-3 transition z-10">
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-    </button>
-    <!-- Image + info -->
-    <div class="max-w-5xl max-h-full w-full flex flex-col items-center gap-3">
-        <img id="lightbox-img" src="" alt="" class="max-h-[85vh] max-w-full object-contain rounded-lg shadow-2xl select-none" style="transition: opacity 0.15s;">
-        <div class="flex items-center gap-4">
-            <p id="lightbox-name" class="text-white text-sm opacity-70 truncate max-w-xs"></p>
-            <p id="lightbox-counter" class="text-white text-xs opacity-50 flex-shrink-0"></p>
-        </div>
-    </div>
-</div>

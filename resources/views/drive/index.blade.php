@@ -69,6 +69,7 @@
         </div>
     </div>
 
+    @include('components.lightbox')
     @include('drive.form')
     @include('drive.script')
 </x-app-layout>

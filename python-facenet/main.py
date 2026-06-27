@@ -829,9 +829,10 @@ def delete_index():
         conn = get_db()
         with conn.cursor() as cur:
             cur.execute("DELETE FROM face_embeddings")
+            cur.execute("DELETE FROM face_clusters")
         conn.commit()
         conn.close()
-        return {"message": "Semua embedding dihapus. Jalankan /index-files untuk re-index."}
+        return {"message": "Semua embedding dan data pengelompokan dihapus. Jalankan /index-files untuk re-index."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -874,6 +875,12 @@ def _do_cluster(folder_ids: list = None) -> dict:
             rows = cur.fetchall()
 
         if not rows:
+            # Jika tidak ada embedding publik, bersihkan kluster lama agar UI tidak menampilkan data basi (ghost)
+            with conn.cursor() as cur:
+                if not folder_ids:
+                    cur.execute("UPDATE face_embeddings SET face_cluster_id = NULL")
+                    cur.execute("DELETE FROM face_clusters")
+            conn.commit()
             return {"clusters": 0, "noise": 0, "total_faces": 0, "message": "Tidak ada embedding publik."}
 
         # 2. Siapkan matrix embedding

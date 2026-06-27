@@ -52,7 +52,7 @@
             <p class="text-sm">Memuat...</p>
         </div>
     </div>
-
+    @include('components.lightbox')
     @push('scripts')
         <script>
             var CSRF = CSRF || document.querySelector('meta[name="csrf-token"]').content;
@@ -153,6 +153,7 @@
                 const grid = document.getElementById('drive-grid');
                 const empty = document.getElementById('empty-state');
                 grid.innerHTML = '';
+                lightboxImages = [];
 
                 if (!folders.length && !files.length) {
                     empty.classList.remove('hidden');
@@ -225,6 +226,19 @@
                     </div>
                 </div>
             `;
+                    if (isImage) {
+                        const thumb = card.querySelector('.h-28');
+                        if (thumb) {
+                            thumb.style.cursor = 'pointer';
+                            thumb.dataset.fileIndex = lightboxImages.length;
+                            lightboxImages.push({ src: `${storageUrl}/${file.file_path}`, name: file.original_name });
+                            thumb.addEventListener('click', e => {
+                                if (!e.target.closest('.ctx-btn') && !e.target.closest('.ctx-menu')) {
+                                    openLightbox(parseInt(thumb.dataset.fileIndex));
+                                }
+                            });
+                        }
+                    }
                     grid.appendChild(card);
                 });
             }

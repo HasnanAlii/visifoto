@@ -7,7 +7,6 @@ var storageUrl = storageUrl || '{{ asset("storage") }}';
 let currentFolderId = null;
 let allFolders = [];
 let allFiles = [];
-let lightboxImages = [];
 
 // --- Dropdown Baru ---
 function toggleNewDropdown(event) {
@@ -503,57 +502,6 @@ document.getElementById('confirm-modal-btn')?.addEventListener('click', () => {
     closeConfirmModal();
 });
 
-// --- Lightbox ---
-let lightboxIndex = 0;
 
-function openLightbox(index) {
-    lightboxIndex = index;
-    const item = lightboxImages[lightboxIndex];
-    if (!item) return;
-    document.getElementById('lightbox-img').src = item.src;
-    document.getElementById('lightbox-name').innerText = item.name;
-    const lb = document.getElementById('lightbox-modal');
-    lb.classList.remove('hidden');
-    lb.classList.add('flex');
-    document.body.style.overflow = 'hidden';
-    updateLightboxNav();
-}
-
-function navigateLightbox(dir) {
-    lightboxIndex = (lightboxIndex + dir + lightboxImages.length) % lightboxImages.length;
-    const item = lightboxImages[lightboxIndex];
-    const img = document.getElementById('lightbox-img');
-    img.style.opacity = '0';
-    img.style.transition = 'opacity 0.15s';
-    setTimeout(() => {
-        img.src = item.src;
-        document.getElementById('lightbox-name').innerText = item.name;
-        img.style.opacity = '1';
-    }, 150);
-    updateLightboxNav();
-}
-
-function updateLightboxNav() {
-    const total = lightboxImages.length;
-    document.getElementById('lightbox-counter').innerText = total > 1 ? `${lightboxIndex + 1} / ${total}` : '';
-    document.getElementById('lightbox-prev').style.visibility = total > 1 ? 'visible' : 'hidden';
-    document.getElementById('lightbox-next').style.visibility = total > 1 ? 'visible' : 'hidden';
-}
-
-function closeLightbox() {
-    const lb = document.getElementById('lightbox-modal');
-    lb.classList.add('hidden');
-    lb.classList.remove('flex');
-    document.getElementById('lightbox-img').src = '';
-    document.body.style.overflow = '';
-}
-
-document.addEventListener('keydown', e => {
-    const lb = document.getElementById('lightbox-modal');
-    if (lb.classList.contains('hidden')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight') navigateLightbox(1);
-    if (e.key === 'ArrowLeft') navigateLightbox(-1);
-});
 </script>
 @endpush

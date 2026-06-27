@@ -19,7 +19,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             @foreach($photos as $photo)
             <div class="group bg-white border border-gray-200 rounded-xl hover:shadow-md transition-shadow overflow-hidden">
-                <div class="aspect-square bg-gray-50 overflow-hidden">
+                <div class="aspect-square bg-gray-50 overflow-hidden cursor-pointer" onclick="openLightbox({{ $loop->index }})">
                     <img src="{{ $photo['url'] }}" alt="{{ $photo['name'] }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
                 </div>
                 <div class="p-2.5 flex items-center justify-between border-t border-gray-100">
@@ -38,4 +38,13 @@
         </div>
         @endif
     </div>
+
+    @include('components.lightbox')
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lightboxImages = @json($photos->map(fn($p) => ['src' => $p['url'], 'name' => $p['name']])->values());
+        });
+    </script>
+    @endpush
 </x-app-layout>
