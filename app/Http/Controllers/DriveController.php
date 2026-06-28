@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessFaceIndex;
 use App\Models\DriveFile;
 use App\Models\Folder;
 use Illuminate\Http\Request;
@@ -209,6 +210,8 @@ class DriveController extends Controller
                 'extension' => $file->getClientOriginalExtension(),
                 'size' => $file->getSize(),
             ]);
+
+            ProcessFaceIndex::dispatch($driveFile);
 
             $uploadedFiles[] = $driveFile;
         }

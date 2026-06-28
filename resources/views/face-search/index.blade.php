@@ -37,16 +37,6 @@
         </div>
         @endunless
 
-        <!-- Tabs -->
-        <div class="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit mb-6">
-            <button @click="tab = 'search'" :class="tab === 'search' ? 'bg-white shadow text-gray-800' : 'text-gray-500 hover:text-gray-700'" class="px-4 py-2 text-sm font-medium rounded-lg transition-all">
-                🔍 Cari Foto
-            </button>
-            <button @click="tab === 'index' ? (tab = 'search') : (tab = 'index')" :class="tab === 'index' ? 'bg-white shadow text-gray-800' : 'text-gray-500 hover:text-gray-700'" class="px-4 py-2 text-sm font-medium rounded-lg transition-all">
-                🗂️ Kelola Index
-            </button>
-        </div>
-
         <!-- ===== TAB: CARI FOTO ===== -->
         <div x-show="tab === 'search'">
 
@@ -187,83 +177,7 @@
             </div>
         </div>
 
-        <!-- ===== TAB: KELOLA INDEX ===== -->
-        <div x-show="tab === 'index'" x-transition.opacity.duration.200ms>
-            <div class="max-w-2xl">
-                <p class="text-sm text-gray-500 mb-4">Pilih folder yang ingin diindeks. Hanya foto di folder tersebut yang akan diproses — lebih cepat daripada index semua.</p>
 
-                <!-- Folder List -->
-                <div class="space-y-2">
-                    @forelse($folderStats as $folder)
-                    <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-4">
-                        <!-- Icon & Info -->
-                        <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-gray-800 truncate">{{ $folder['name'] }}</p>
-                            <div class="flex items-center gap-2 mt-1">
-                                <!-- Progress bar -->
-                                <div class="flex-1 bg-gray-100 rounded-full h-1.5">
-                                    <div class="bg-blue-500 h-1.5 rounded-full transition-all" style="width: {{ $folder['index_pct'] }}%"></div>
-                                </div>
-                                <span class="text-[10px] text-gray-500 whitespace-nowrap">
-                                    {{ $folder['indexed'] }}/{{ $folder['total_files'] }} foto
-                                    @if($folder['with_face'] > 0)
-                                        · <span class="text-green-600">{{ $folder['with_face'] }} wajah</span>
-                                    @endif
-                                </span>
-                            </div>
-                        </div>
-                        <!-- Badge & Button -->
-                        <div class="flex items-center gap-2 flex-shrink-0">
-                            @if($folder['not_indexed'] > 0)
-                                <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">{{ $folder['not_indexed'] }} belum</span>
-                            @else
-                                <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">✓ Selesai</span>
-                            @endif
-                            <button
-                                @click="indexFolder({{ $folder['id'] }}, '{{ addslashes($folder['name']) }}', {{ $folder['total_files'] }})"
-                                :disabled="indexingFolderId === {{ $folder['id'] }}"
-                                class="px-3 py-1.5 text-xs font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                :class="indexingFolderId === {{ $folder['id'] }} ? 'bg-gray-100 text-gray-500' : 'bg-blue-600 hover:bg-blue-700 text-white'"
-                                x-text="indexingFolderId === {{ $folder['id'] }} ? 'Memproses...' : 'Index Folder'"
-                            ></button>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
-                        <p class="text-sm text-gray-500">Belum ada folder. Upload foto ke dalam folder terlebih dahulu.</p>
-                    </div>
-                    @endforelse
-                </div>
-
-                <!-- Progress / Result -->
-                <template x-if="indexResult">
-                    <div class="mt-4 p-4 rounded-xl border" :class="indexResult.success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'">
-                        <p class="text-sm font-semibold" :class="indexResult.success ? 'text-green-800' : 'text-red-800'" x-text="indexResult.message"></p>
-                        <template x-if="indexResult.success && indexResult.indexed > 0">
-                            <p class="text-xs mt-1 text-green-700">
-                                Terindeks: <span x-text="indexResult.indexed"></span> |
-                                Wajah ditemukan: <span x-text="indexResult.with_face"></span> |
-                                Gagal: <span x-text="indexResult.failed"></span>
-                            </p>
-                        </template>
-                        <p class="text-xs text-gray-500 mt-1">Refresh halaman untuk lihat statistik terbaru.</p>
-                    </div>
-                </template>
-
-                <!-- Tips -->
-                <div class="mt-4 bg-blue-50 border border-blue-100 rounded-xl p-4">
-                    <p class="text-xs font-semibold text-blue-700 mb-1">💡 Tips</p>
-                    <ul class="text-xs text-blue-600 space-y-1 list-disc list-inside">
-                        <li>Index hanya diperlukan sekali per folder</li>
-                        <li>Foto tanpa wajah tetap dicatat namun tidak muncul di hasil pencarian</li>
-                        <li>Gunakan GPU (CUDA) untuk proses lebih cepat</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
 
         <!-- Lightbox -->
         <div x-show="viewerOpen" style="display:none" class="fixed inset-0 z-[100] flex items-center justify-center">
@@ -317,9 +231,6 @@
             thresholdUsed: 0,
             selectedFolderId: '',
             selectedFolderName: '',
-            // Index tab
-            indexingFolderId: null,
-            indexResult: null,
             // AbortController untuk cancel
             _abortController: null,
 
@@ -430,26 +341,6 @@
                 if (input) input.value = '';
             },
 
-            async indexFolder(folderId, folderName, totalFiles) {
-                if (totalFiles === 0) { alert('Folder ini tidak memiliki file gambar.'); return; }
-                this.indexingFolderId = folderId;
-                this.indexResult = null;
-
-                try {
-                    const formData = new FormData();
-                    formData.append('folder_id', folderId);
-                    formData.append('include_subfolders', '1');
-                    formData.append('_token', document.querySelector('meta[name=csrf-token]').content);
-
-                    const res = await fetch('{{ route('face-search.index-folder') }}', { method: 'POST', body: formData });
-                    const data = await res.json();
-                    this.indexResult = data;
-                } catch {
-                    this.indexResult = { success: false, message: 'Koneksi gagal.' };
-                } finally {
-                    this.indexingFolderId = null;
-                }
-            },
 
             openViewer(index) { this.currentIndex = index; this.viewerOpen = true; document.body.classList.add('overflow-hidden'); },
             closeViewer() { this.viewerOpen = false; document.body.classList.remove('overflow-hidden'); },

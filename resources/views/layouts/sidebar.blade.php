@@ -1,5 +1,6 @@
 <aside class="hidden md:flex flex-col w-56 bg-white flex-shrink-0 pt-4 border-r border-gray-100">
     <!-- Dropdown Baru Sidebar -->
+    @hasrole('admin')
     <div class="px-3 mb-4 relative" id="sidebar-new-wrapper">
         <button onclick="toggleSidebarNew(event)" class="flex items-center gap-2.5 bg-white border border-gray-200 shadow-sm hover:shadow-md hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-4 rounded-2xl transition-shadow w-full text-sm select-none">
             <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 36 36"><path fill="#34A853" d="M16 16v14h4V20z"></path><path fill="#4285F4" d="M30 16H20l-4 4h14z"></path><path fill="#FBBC05" d="M6 16v4h10l4-4z"></path><path fill="#EA4335" d="M20 16V6h-4v14z"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>
@@ -40,12 +41,15 @@
             </button>
         </div>
     </div>
+    @endhasrole
 
     <nav class="flex-1 space-y-0.5 px-2">
+        @hasrole('admin')
         <a href="{{ route('drive.index') }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-r-full {{ request()->routeIs('drive.*') ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-100' }}">
             <svg class="mr-3 h-5 w-5 {{ request()->routeIs('drive.*') ? 'text-blue-700' : 'text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
             Foto Saya
         </a>
+        @endhasrole
         <a href="{{ route('public.index') }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-r-full {{ request()->routeIs('public.*') ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-100' }}">
             <svg class="mr-3 h-5 w-5 {{ request()->routeIs('public.*') ? 'text-blue-700' : 'text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
             Publik
