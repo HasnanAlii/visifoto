@@ -67,3 +67,20 @@
     </div>
 </div>
 
+<!-- Modal: Info / Sukses -->
+<div id="info-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="hideModal('info-modal')"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 z-10 text-center">
+        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+            <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2" id="info-modal-title">Berhasil</h3>
+        <p class="text-sm text-gray-700 mb-4 font-mono bg-gray-100 p-2 rounded-lg break-all" id="info-modal-message"></p>
+        <div class="flex gap-3 justify-center">
+            <button type="button" onclick="hideModal('info-modal')" class="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full">Tutup</button>
+        </div>
+    </div>
+</div>
+

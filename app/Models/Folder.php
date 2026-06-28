@@ -13,7 +13,8 @@ class Folder extends Model
         'name',
         'parent_id',
         'user_id',
-        'is_public'
+        'is_public',
+        'unique_code',
     ];
 
     public function parent()

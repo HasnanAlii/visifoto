@@ -12,7 +12,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return redirect()->route('drive.index');
+    return redirect()->route('public.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -23,12 +23,14 @@ Route::middleware('auth')->group(function () {
     // Unified Drive Routes
     Route::get('/drive', [DriveController::class, 'index'])->name('drive.index');
     Route::get('/drive/folder/{folder}', [DriveController::class, 'folder'])->name('drive.folder');
+    Route::post('/drive/access-code', [DriveController::class, 'accessByCode'])->name('drive.access-code');
 
     // Drive API actions
     Route::post('/drive/folders', [DriveController::class, 'storeFolder'])->name('drive.folders.store');
     Route::put('/drive/folders/{folder}', [DriveController::class, 'updateFolder'])->name('drive.folders.update');
     Route::delete('/drive/folders/{folder}', [DriveController::class, 'destroyFolder'])->name('drive.folders.destroy');
     Route::put('/drive/folders/{folder}/toggle-public', [DriveController::class, 'toggleFolderPublic'])->name('drive.folders.toggle-public');
+    Route::post('/drive/folders/{folder}/generate-code', [DriveController::class, 'generateUniqueCode'])->name('drive.folders.generate-code');
     Route::get('/drive/folders/{folder}/download', [DriveController::class, 'downloadFolder'])->name('drive.folders.download');
 
     Route::post('/drive/files', [DriveController::class, 'storeFile'])->name('drive.files.store');

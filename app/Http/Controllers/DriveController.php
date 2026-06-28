@@ -8,6 +8,7 @@ use App\Models\Folder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DriveController extends Controller
 {
@@ -335,8 +336,41 @@ class DriveController extends Controller
     }
 
     /**
-     * Build breadcrumb trail untuk folder
+     * Generate unique code for folder
      */
+    public function generateUniqueCode(Folder $folder)
+    {
+        do {
+            $code = strtoupper(Str::random(8));
+        } while (Folder::where('unique_code', $code)->exists());
+
+        $folder->update(['unique_code' => $code]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kode unik berhasil dibuat',
+            'data' => $folder,
+        ]);
+    }
+
+    /**
+     * Access folder by unique code
+     */
+    public function accessByCode(Request $request)
+    {
+        $request->validate(['code' => 'required|string']);
+
+        $folder = Folder::where('unique_code', $request->code)->first();
+
+        if (! $folder) {
+            return redirect()->back()->with('error', 'Kode unik tidak ditemukan.');
+        }
+
+        // Redirect to folder view. Depending on whether they have auth, etc.
+        // Since this is in auth group, we can just redirect to drive.folder
+        return redirect()->route('drive.folder', $folder->id);
+    }
+
     private function buildBreadcrumbs(Folder $folder): array
     {
         $breadcrumbs = [];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Folder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        if ($request->filled('folder_code')) {
+            $folder = Folder::where('unique_code', $request->folder_code)->first();
+            if ($folder) {
+                return redirect()->route('public.folder', $folder->id);
+            }
+        }
+
+        return redirect()->intended(route('public.index', absolute: false));
     }
 
     /**

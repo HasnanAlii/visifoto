@@ -201,6 +201,18 @@ function renderGrid(folders, files) {
                             ${folder.is_public ? 'Jadikan Privat' : 'Jadikan Publik'}
                         </button>
                         <hr class="my-1 border-gray-100">
+                        ${!folder.unique_code ? `
+                        <button onclick="generateUniqueCode(${folder.id})" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors">
+                            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
+                            Buat Kode Unik
+                        </button>
+                        ` : `
+                        <button onclick="viewUniqueCode('${folder.unique_code}')" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors">
+                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            Lihat Kode Unik
+                        </button>
+                        `}
+                        <hr class="my-1 border-gray-100">
                         <a href="${driveRootUrl}/folders/${folder.id}/download" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                             Download
@@ -456,6 +468,22 @@ function deleteFile(id) {
             currentFolderId ? loadFolder(currentFolderId) : loadRoot();
         }
     );
+}
+
+async function generateUniqueCode(folderId) {
+    const res = await apiCall(`${driveRootUrl}/folders/${folderId}/generate-code`, 'POST');
+    if (res && res.success) {
+        document.getElementById('info-modal-title').innerText = 'Kode Unik Dibuat';
+        document.getElementById('info-modal-message').innerText = res.data.unique_code;
+        showModal('info-modal');
+        currentFolderId ? loadFolder(currentFolderId) : loadRoot();
+    }
+}
+
+function viewUniqueCode(code) {
+    document.getElementById('info-modal-title').innerText = 'Kode Unik Folder';
+    document.getElementById('info-modal-message').innerText = code;
+    showModal('info-modal');
 }
 
 // --- Helpers ---

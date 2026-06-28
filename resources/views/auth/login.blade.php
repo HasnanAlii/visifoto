@@ -14,7 +14,7 @@
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1.5 w-full rounded-xl" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <x-text-input id="email" class="block mt-1.5 w-full rounded-xl" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="Masukan Email"/>
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
@@ -24,8 +24,15 @@
             <x-text-input id="password" class="block mt-1.5 w-full rounded-xl"
                             type="password"
                             name="password"
-                            required autocomplete="current-password" />
+                            required autocomplete="current-password" 
+                            placeholder="Masukan Password"/>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        </div>
+
+        <!-- Kode Unik Folder (Optional) -->
+        <div class="mt-4">
+            <x-input-label for="folder_code" value="Kode Unik Folder (Opsional)" />
+            <x-text-input id="folder_code" class="block mt-1.5 w-full rounded-xl border-gray-300 shadow-sm" type="text" name="folder_code" :value="old('folder_code')" placeholder="Masukan Kode Unik" />
         </div>
 
         <!-- Remember Me & Forgot Password Row -->
